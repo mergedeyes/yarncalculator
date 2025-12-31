@@ -14,6 +14,7 @@ A robust Java Swing application designed for textile enthusiasts, knitters, and 
 *   **Java Development Kit (JDK) 25** or higher.
     *   This application leverages modern Java features. Please ensure you have the latest JDK installed.
     *   Download: [Adoptium (Eclipse Temurin)](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/).
+*   **Fiber names: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215**
 
 ### 🚀 How to Run (Standard)
 
@@ -128,6 +129,7 @@ Eine leistungsstarke Java-Swing-Anwendung für Textilliebhaber, Stricker und Des
 *   **Java Development Kit (JDK) 25** oder höher.
     *   Die Anwendung nutzt moderne Java-Funktionen. Bitte stellen Sie sicher, dass Sie das aktuelle JDK installiert haben.
     *   Download: [Adoptium (Eclipse Temurin)](https://adoptium.net/) oder [Oracle](https://www.oracle.com/java/technologies/downloads/).
+*   **Faser-Namen: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215**
 
 ### 🚀 Installation & Start (Standard)
 
