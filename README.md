@@ -16,7 +16,7 @@ A robust Java Swing application designed for textile enthusiasts, knitters, and 
     *   Download: [Adoptium (Eclipse Temurin)](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/).
 *   **Fiber names: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215**
 
-### 🚀 How to Run (Standard)
+### 🚀 How to Run (For Windows, skip this step)
 
 1.  Download the `GarnRechnerProzedural.java` file.
 2.  Open your terminal or command prompt.
@@ -131,7 +131,7 @@ Eine leistungsstarke Java-Swing-Anwendung für Textilliebhaber, Stricker und Des
     *   Download: [Adoptium (Eclipse Temurin)](https://adoptium.net/) oder [Oracle](https://www.oracle.com/java/technologies/downloads/).
 *   **Faser-Namen: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215**
 
-### 🚀 Installation & Start (Standard)
+### 🚀 Installation & Start (Für Windows, diesen Schritt überspringen)
 
 1.  Laden Sie die Datei `GarnRechnerProzedural.java` herunter.
 2.  Öffnen Sie Ihr Terminal oder die Eingabeaufforderung.
