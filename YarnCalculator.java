@@ -175,9 +175,11 @@ public class YarnCalculator {
             p("lbl_label_text", "Etikett-Text", "Label text");
             p("btn_copy_table", "Für Excel kopieren", "Copy for Excel");
             p("tip_copy_table", "Tabelle kopieren – danach in Excel, LibreOffice oder Google Sheets einfügen", "Copy the table – then paste it into Excel, LibreOffice or Google Sheets");
-            p("btn_copy_label", "Etikett-Text kopieren", "Copy label text");
+            p("btn_copy_label", "Etikett für Excel kopieren", "Copy label for Excel");
+            p("tip_copy_label", "Etikett kopieren – beim Einfügen landet es in einer einzigen Zelle, jede Faser in einer eigenen Zeile. Schriftart und -größe der Zelle bleiben erhalten.",
+                    "Copy the label – it pastes into a single cell, one fiber per line. The cell keeps its font and size.");
             p("st_copied_table", "Tabelle kopiert – einfach in eine Tabellenkalkulation einfügen.", "Table copied – just paste it into a spreadsheet.");
-            p("st_copied_label", "Etikett-Text kopiert.", "Label text copied.");
+            p("st_copied_label", "Etikett kopiert – in eine Zelle einfügen, jede Faser steht in einer eigenen Zeile.", "Label copied – paste it into a cell, each fiber gets its own line.");
             // Status bar
             p("st_removed", "„%s“ entfernt.", "Removed \"%s\".");
             p("btn_undo", "Rückgängig", "Undo");
@@ -284,7 +286,9 @@ public class YarnCalculator {
                 <li><b>Fasern eintragen</b> – so wie sie auf der Banderole stehen, z.&nbsp;B. <i>Schurwolle 75</i> und
                     <i>Polyamid 25</i>. Beim Tippen wird der Fasername vorgeschlagen.</li>
                 <li><b>Ergebnis ablesen</b> – rechts, es aktualisiert sich beim Tippen. <i>Für Excel kopieren</i> legt die
-                    Tabelle in die Zwischenablage, <i>Etikett-Text kopieren</i> eine Zeile wie <i>75 % Schurwolle, 25 % Polyamid</i>.</li>
+                    Tabelle in die Zwischenablage. <i>Etikett für Excel kopieren</i> kopiert das Etikett so, dass es beim Einfügen
+                    in <b>einer</b> Zelle landet, jede Faser in einer eigenen Zeile (z.&nbsp;B. <i>75 % Schurwolle</i> / <i>25 % Polyamid</i>).
+                    Schriftart und -größe der Zelle bleiben dabei erhalten.</li>
                 </ol>
                 <h3>Was die Farben bedeuten</h3>
                 <ul>
@@ -340,7 +344,8 @@ public class YarnCalculator {
                 <li><b>Enter the fibers</b> – as printed on the ball band, e.g. <i>Wool 75</i> and <i>Polyamide 25</i>.
                     Fiber names are suggested while you type.</li>
                 <li><b>Read the result</b> – on the right; it updates while you type. <i>Copy for Excel</i> puts the table
-                    on the clipboard, <i>Copy label text</i> copies a line like <i>75% Wool, 25% Polyamide</i>.</li>
+                    on the clipboard. <i>Copy label for Excel</i> copies the label so that it pastes into <b>one</b> cell,
+                    one fiber per line (e.g. <i>75% Wool</i> / <i>25% Polyamide</i>). The cell keeps its font and size.</li>
                 </ol>
                 <h3>What the colors mean</h3>
                 <ul>
@@ -722,15 +727,22 @@ public class YarnCalculator {
 
     record Result(int yarnCount, double totalGrams, List<String> problems, List<String> fibers, double[] grams, long[] units, int decimals) {
         String share(int i) { return fmt(units[i] / (decimals == 0 ? 1.0 : 10.0), decimals); }
+        /** One fiber per line, e.g. "75 % Schurwolle\n25 % Polyamid". */
         String labelText() {
             StringBuilder b = new StringBuilder();
             for (int i = 0; i < fibers.size(); i++) {
                 if (units[i] == 0) continue;
-                if (b.length() > 0) b.append(", ");
+                if (b.length() > 0) b.append('\n');
                 b.append(pct(share(i))).append(' ').append(fibers.get(i));
             }
             return b.toString();
         }
+
+        /**
+         * The label as one spreadsheet cell: plain text in quotes, so Excel, LibreOffice and Google Sheets
+         * paste it into a single cell with line breaks. Being plain text, it keeps the cell's font and size.
+         */
+        String labelCell() { return '"' + labelText().replace("\"", "\"\"") + '"'; }
     }
 
     // =====================================================================
@@ -1963,11 +1975,13 @@ public class YarnCalculator {
             JButton copyTable = Ui.button(tr("btn_copy_table"), this::copyTable);
             copyTable.setToolTipText(tr("tip_copy_table"));
             buttons.add(copyTable);
-            buttons.add(Ui.button(tr("btn_copy_label"), () -> {
+            JButton copyLabel = Ui.button(tr("btn_copy_label"), () -> {
                 if (last == null) return;
-                Ui.copy(last.labelText());
+                Ui.copy(last.labelCell());
                 app.status(tr("st_copied_label"), Ui.OK);
-            }));
+            });
+            copyLabel.setToolTipText(tr("tip_copy_label"));
+            buttons.add(copyLabel);
             buttons.setAlignmentX(LEFT_ALIGNMENT);
             bottom.add(buttons);
             res.add(bottom, BorderLayout.SOUTH);
@@ -2001,6 +2015,8 @@ public class YarnCalculator {
             model.setResult(r);
             bar.setValues(r.grams());
             label.setText(r.labelText());
+            label.setRows(Math.max(2, Math.min(6, r.fibers().size())));
+            label.revalidate();
             cards.show(cardPanel, "result");
         }
 
