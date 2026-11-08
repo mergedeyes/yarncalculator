@@ -1,233 +1,269 @@
-# Yarn Composition Calculator / Garn-Zusammensetzungs-Rechner
+# Yarn Calculator / Garn-Rechner
 
-[🇬🇧 English Documentation](#-english-documentation) | [🇩🇪 Deutsche Dokumentation](#-deutsche-dokumentation)
+[🇬🇧 English](#-english) | [🇩🇪 Deutsch](#-deutsch)
 
----
+Knitted or crocheted something from several different yarns? Yarn Calculator tells you what the finished piece is made of overall, for example for a care label.
 
-<a name="-english-documentation"></a>
-## 🇬🇧 English Documentation
-
-A robust Java Swing application designed for textile enthusiasts, knitters, and designers. It calculates the exact fiber composition of a project that combines multiple different yarns with varying weights and blends.
-
-### 📋 Prerequisites
-
-*   **Java Development Kit (JDK) 25** or higher.
-    *   This application leverages modern Java features. Please ensure you have the latest JDK installed.
-    *   Download: [Adoptium (Eclipse Temurin)](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/).
-*   **Fiber names: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215**
-
-### 🚀 How to Run (For Windows, skip this step)
-
-1.  Download the `GarnRechnerProzedural.java` file.
-2.  Open your terminal or command prompt.
-3.  Navigate to the directory containing the file.
-4.  Compile the code:
-    ```bash
-    javac GarnRechnerProzedural.java
-    ```
-5.  Run the application:
-    ```bash
-    java GarnRechnerProzedural
-    ```
-
-### 🪟 Windows Easy Setup (ZIP & Shortcut)
-
-If you have downloaded a ZIP file containing the program, follow these steps to set it up permanently:
-
-1.  **Unpack:**
-    *   Right-click the downloaded ZIP file.
-    *   Select "Extract All..." (or use 7-Zip/WinRAR).
-    *   Choose a permanent folder where you want the program to live (e.g., `C:\Users\YourName\Documents\YarnCalculator`).
-    *   Click **Extract**.
-
-2.  **Verify/Create Batch File:**
-    *   Open the folder. Look for a file named `start.bat` (or similar).
-    *   *If it doesn't exist:* Right-click in the empty folder space > New > Text Document. Name it `start.bat` (make sure the file extension changes from `.txt` to `.bat`). Right-click it > Edit, and paste this text:
-        ```bat
-        @echo off
-        start javaw GarnRechnerProzedural
-        exit
-        ```
-    *   Save and close the file.
-
-3.  **Create Desktop Shortcut:**
-    *   Right-click the `start.bat` file.
-    *   Select **Show more options** (Windows 11) if necessary.
-    *   Select **Send to** > **Desktop (create shortcut)**.
-
-4.  **Launch:**
-    *   You can now start the calculator anytime by double-clicking the new shortcut on your Desktop.
-
-### ✨ Features
-
-*   **Multi-Yarn Calculation:** Add as many yarn sources as needed. The interface automatically numbers them (Yarn 1, Yarn 2, etc.) and uses a thick border to distinguish them.
-*   **Weighted Calculation:** Enter the specific weight (in grams) for each yarn to get a mathematically accurate total composition based on the ratio of materials.
-*   **Template System (JSON):**
-    *   **Yarn Templates:** Save your favorite yarn blends (e.g., "Sock Wool Classic") to a local file and reuse them later.
-    *   **Fiber Database:** Manage a list of fiber types (Wool, Cotton, Silk, etc.) in a dropdown menu. You can add new ones or delete existing ones directly from the UI.
-*   **Smart Editing:**
-    *   **Locking:** Predefined templates are locked by default to prevent accidental changes.
-    *   **Edit Mode:** Clicking **"Edit Yarn"** unlocks the fields and switches the dropdown to **"New"**, allowing you to modify a preset without overwriting the original unless desired.
-    *   **Save/Overwrite:** Use **"Save Yarn"** to store new templates or overwrite existing ones.
-*   **Precision Rounding:** The app uses the **Largest Remainder Method** (Hare-Niemeyer) to ensure the calculated percentages always sum up to exactly **100.0%**. It minimizes statistical rounding errors better than standard rounding.
-*   **Excel Export:** The result dialog includes a **"Copy"** button. This puts the data into your clipboard in a format optimized for pasting directly into Excel, Google Sheets, or other spreadsheet software (Tab-separated values).
-*   **Bilingual Interface:** Toggle between **English (EN)** and **German (DE)** instantly via the buttons in the top-right corner.
-
-### 📖 Usage Guide
-
-1.  **Add Yarn:** Click **"Add Yarn"** to create a new input block.
-2.  **Select Template:**
-    *   Choose a saved yarn from the dropdown menu to auto-fill fibers.
-    *   Or select **"New"** to define a custom blend.
-3.  **Enter Weight:** Input the weight in **"Grams"** used for this specific yarn.
-4.  **Define Fibers:**
-    *   Select a fiber from the dropdown or type a new name.
-    *   Enter the percentage for that fiber.
-    *   **Buttons:**
-        *   **`S` (Save):** Saves the currently typed fiber name to the global dropdown list.
-        *   **`D` (Delete):** Removes the selected fiber type from the global dropdown list.
-        *   **"Remove Fiber":** Removes the specific fiber row from the current yarn.
-    *   **Fill Rest:** Click **"Fill Rest to 100%"** to automatically calculate the remaining percentage for the last row.
-5.  **Calculate:** Click the **"Calculate"** button at the bottom.
-6.  **Export:** In the result window, click **"Copy"** to put the table into your clipboard.
-
-### 📂 Configuration Files
-
-The application automatically generates two JSON files in the same directory to store your data.
-
-#### `yarns.json`
-Stores your saved yarn templates.
-```json
-{
-  "Sock Wool Classic": {
-    "f0": { "name": "Virgin Wool", "percentage": 75.00 },
-    "f1": { "name": "Polyamide", "percentage": 25.00 }
-  }
-}
-```
-
-#### `fibers.json`
-Stores the list of available fiber names for the dropdown.
-```json
-[
-  "Cotton",
-  "Merino",
-  "Silk",
-  "Polyamide"
-]
-```
+> Example: 150 g sock yarn (75 % virgin wool, 25 % polyamide) + 25 g mohair silk (70 % mohair, 30 % silk) + 40 g cotton
+> → **52.3 % virgin wool, 18.6 % cotton, 17.5 % polyamide, 8.1 % mohair, 3.5 % silk**
 
 ---
 
-<a name="-deutsche-dokumentation"></a>
-## 🇩🇪 Deutsche Dokumentation
+<a name="-english"></a>
+## 🇬🇧 English
 
-Eine leistungsstarke Java-Swing-Anwendung für Textilliebhaber, Stricker und Designer. Das Programm berechnet die exakte Faserzusammensetzung eines Projekts, bei dem mehrere verschiedene Garne mit unterschiedlichen Gewichten und Mischungen kombiniert werden.
+### Contents
+1. [Installation](#installation)
+2. [Upgrading from the old version (GarnRechnerProzedural)](#upgrading-from-the-old-version)
+3. [How to use it](#how-to-use-it)
+4. [Your data and backups](#your-data-and-backups)
+5. [Troubleshooting](#troubleshooting)
 
-### 📋 Voraussetzungen
+### Installation
 
-*   **Java Development Kit (JDK) 25** oder höher.
-    *   Die Anwendung nutzt moderne Java-Funktionen. Bitte stellen Sie sicher, dass Sie das aktuelle JDK installiert haben.
-    *   Download: [Adoptium (Eclipse Temurin)](https://adoptium.net/) oder [Oracle](https://www.oracle.com/java/technologies/downloads/).
-*   **Faser-Namen: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215**
+**1. Install Java (once).** You need a **JDK version 17 or newer**. A plain "JRE" is not enough.
+Download the free *Eclipse Temurin JDK* from **[adoptium.net](https://adoptium.net/)** (the "LTS" version is fine).
+On Windows, keep the **"Add to PATH"** option enabled in the installer.
 
-### 🚀 Installation & Start (Für Windows, diesen Schritt überspringen)
+**2. Download Yarn Calculator.** Put these files into a folder of your choice, e.g. `Documents\YarnCalculator`:
 
-1.  Laden Sie die Datei `GarnRechnerProzedural.java` herunter.
-2.  Öffnen Sie Ihr Terminal oder die Eingabeaufforderung.
-3.  Navigieren Sie in den Ordner, der die Datei enthält.
-4.  Kompilieren Sie den Code:
-    ```bash
-    javac GarnRechnerProzedural.java
-    ```
-5.  Starten Sie das Programm:
-    ```bash
-    java GarnRechnerProzedural
-    ```
+| File | What it is |
+|---|---|
+| `YarnCalculator.java` | the program |
+| `start.bat` | starter for Windows |
+| `start.sh` | starter for Linux / macOS |
 
-### 🪟 Windows Einrichtung (ZIP & Verknüpfung)
+**3. Start it.**
 
-Wenn Sie eine ZIP-Datei mit dem Programm heruntergeladen haben, folgen Sie diesen Schritten für eine dauerhafte Einrichtung:
+- **Windows:** double-click `start.bat`.
+  For a desktop icon, right-click `start.bat` → *Show more options* (Windows 11) → *Send to* → *Desktop (create shortcut)*.
+- **macOS / Linux:** open a terminal in the folder and run `./start.sh`.
+  On macOS you can rename `start.sh` to `start.command` to start it with a double-click.
+- **Any system, by hand:** `java YarnCalculator.java`
 
-1.  **Entpacken:**
-    *   Rechtsklick auf die heruntergeladene ZIP-Datei.
-    *   Wählen Sie "Alle extrahieren..." (oder nutzen Sie 7-Zip/WinRAR).
-    *   Wählen Sie einen dauerhaften Ordner, in dem das Programm liegen soll (z. B. `C:\Benutzer\IhrName\Dokumente\GarnRechner`).
-    *   Klicken Sie auf **Extrahieren**.
+There's nothing to compile. Java runs the file directly, so the first start can take a few seconds.
 
-2.  **Start-Datei prüfen/erstellen:**
-    *   Öffnen Sie den Ordner. Suchen Sie nach einer Datei namens `start.bat` (oder ähnlich).
-    *   *Falls nicht vorhanden:* Rechtsklick in den leeren Bereich > Neu > Textdokument. Nennen Sie es `start.bat` (bestätigen Sie die Änderung der Dateiendung von `.txt` zu `.bat`). Rechtsklick darauf > Bearbeiten und folgenden Text einfügen:
-        ```bat
-        @echo off
-        start javaw GarnRechnerProzedural
-        exit
-        ```
-    *   Speichern und schließen.
+### Upgrading from the old version
 
-3.  **Desktop-Verknüpfung erstellen:**
-    *   Rechtsklick auf die Datei `start.bat`.
-    *   Wählen Sie **Weitere Optionen anzeigen** (falls Windows 11).
-    *   Wählen Sie **Senden an** > **Desktop (Verknüpfung erstellen)**.
+The old version was called `GarnRechnerProzedural.java` and stored its data in `yarns.json` and `fibers.json`.
 
-4.  **Starten:**
-    *   Sie können den Rechner nun jederzeit per Doppelklick auf die Verknüpfung auf Ihrem Desktop starten.
+1. Copy `YarnCalculator.java` and `start.bat` (or `start.sh`) **into the same folder as before**, where `yarns.json` and `fibers.json` are.
+2. Start the program with the **new** `start.bat`. If you have a desktop shortcut to the old `start.bat`, replace that file with the new one.
+3. On the first start, your saved yarns and fiber names are **imported automatically**. A green box in the welcome guide confirms this.
 
-### ✨ Funktionen
+Your old files are **not changed or deleted**, so you can always go back.
+If the new version was started somewhere else and found nothing, use **File › Import…** and select your old `yarns.json`. The `fibers.json` next to it is imported too.
 
-*   **Mehrfach-Garn-Berechnung:** Fügen Sie beliebig viele Garnquellen hinzu. Die Oberfläche nummeriert diese automatisch (Garn 1, Garn 2, usw.) und hebt sie durch einen dicken Rahmen hervor.
-*   **Gewichtete Berechnung:** Geben Sie das spezifische Gewicht (in Gramm) für jedes Garn ein, um eine mathematisch exakte Gesamtzusammensetzung basierend auf dem Materialverhältnis zu erhalten.
-*   **Vorlagen-System (JSON):**
-    *   **Garn-Vorlagen:** Speichern Sie Ihre bevorzugten Garnmischungen (z. B. "Sockenwolle Klassik") in einer lokalen Datei, um sie später wiederzuverwenden.
-    *   **Faser-Datenbank:** Verwalten Sie eine Liste von Faserarten (Wolle, Baumwolle, Seide usw.) in einem Dropdown-Menü. Sie können neue Arten hinzufügen oder bestehende löschen.
-*   **Intelligentes Bearbeiten:**
-    *   **Sperre:** Vordefinierte Vorlagen sind standardmäßig gesperrt, um versehentliche Änderungen zu verhindern.
-    *   **Bearbeiten-Modus:** Ein Klick auf **"Garn Bearbeiten"** entsperrt die Felder und wechselt in den Modus **"Neu"**, sodass Sie eine Mischung anpassen können, ohne das Original zu überschreiben (es sei denn, Sie wünschen dies).
-    *   **Speichern/Überschreiben:** Mit **"Garn Speichern"** können Sie neue Vorlagen sichern oder bestehende nach einer Bestätigung überschreiben.
-*   **Präzises Runden:** Die App verwendet das **Hare-Niemeyer-Verfahren** (Largest Remainder Method), um sicherzustellen, dass die Endsumme der Anteile immer exakt **100,0 %** beträgt. Dies minimiert statistische Rundungsfehler besser als herkömmliches Runden.
-*   **Excel-Export:** Das Ergebnisfenster enthält einen **"Kopieren"**-Button. Dieser kopiert die Tabelle in die Zwischenablage in einem Format, das direkt in Excel oder Google Sheets eingefügt werden kann.
-*   **Zweisprachige Oberfläche:** Wechseln Sie über die Buttons oben rechts sofort zwischen **Englisch (EN)** und **Deutsch (DE)**.
+You can delete the old `GarnRechnerProzedural.java` and `*.class` files afterwards.
 
-### 📖 Bedienungsanleitung
+### How to use it
 
-1.  **Garn hinzufügen:** Klicken Sie auf **"Garn hinzufügen"**, um einen neuen Eingabeblock zu erstellen.
-2.  **Vorlage wählen:**
-    *   Wählen Sie ein gespeichertes Garn aus dem Dropdown-Menü, um die Fasern automatisch auszufüllen.
-    *   Oder lassen Sie die Auswahl auf **"Neu"**, um eine eigene Mischung zu definieren.
-3.  **Gewicht eingeben:** Tragen Sie das Gewicht in **"Gramm"** ein, das von diesem Garn verwendet wird.
-4.  **Fasern definieren:**
-    *   Wählen Sie eine Faser aus dem Dropdown oder tippen Sie einen neuen Namen ein.
-    *   Geben Sie den prozentualen Anteil ein.
-    *   **Buttons:**
-        *   **`S` (Speichern):** Speichert den aktuell eingetippten Fasernamen in die globale Dropdown-Liste.
-        *   **`D` (Löschen):** Entfernt die ausgewählte Faserart aus der globalen Liste.
-        *   **"Faser Entfernen":** Entfernt die spezifische Faserzeile aus dem aktuellen Garn.
-    *   **Rest auffüllen:** Klicken Sie auf **"Rest auf 100%"**, um den verbleibenden Anteil für die letzte Zeile automatisch zu berechnen.
-5.  **Berechnen:** Klicken Sie unten auf den Button **"Berechnen"**.
-6.  **Exportieren:** Klicken Sie im Ergebnisfenster auf **"Kopieren"**, um die Tabelle in die Zwischenablage zu legen.
+The program has a built-in guide (**Help › Guide**, or **F1**) that opens automatically on the first start. In short:
 
-### 📂 Konfigurationsdateien
+1. **Add a yarn**: one entry for every yarn you used. Use **+ Add yarn**, or **From library…** for a saved yarn.
+2. **Enter the weight** you used, in grams.
+   *Tip:* weigh the leftover balls and subtract them from the full ball weight.
+3. **Enter the fibers** as printed on the ball band, e.g. *Wool 75* and *Polyamide 25*. Fiber names are suggested while you type.
+4. **Read the result** on the right. It updates as you type.
+   - **Copy for Excel** copies the table, which you can paste into Excel, LibreOffice or Google Sheets.
+   - **Copy label text** copies a line like `75% Wool, 25% Polyamide`.
+   - **Round to** switches between whole percent and one decimal place.
 
-Die Anwendung erstellt automatisch zwei JSON-Dateien im selben Verzeichnis, um Ihre Daten zu speichern.
+**Colors:** each yarn shows a status line.
 
-#### `yarns.json`
-Speichert Ihre Garn-Vorlagen.
+- 🟢 **Green:** the yarn is complete.
+- 🟠 **Orange:** something is missing, e.g. the shares only add up to 90 %. A **Fill up** button enters the missing share for you.
+- 🔴 **Red:** an entry is invalid, e.g. a letter in a number field.
+
+The result appears as soon as all yarns are green. Both `12,5` and `12.5` work as decimal input.
+
+**Yarn library:** click **Save to library** on a yarn to reuse it later. The line under the name shows whether the yarn is *saved in library* or *differs from library*. If it differs, **Update library** saves your change.
+You can rename, edit, duplicate or delete saved yarns under **Library › Manage yarns**.
+
+**Fiber names:** the list only provides suggestions, and you can type any name. New names are added automatically when you save a yarn to the library. Manage the list under **Library › Manage fibers**.
+For textile labels in the EU, only the fiber names in Annex I of [Regulation (EU) No 1007/2011](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02011R1007-20180215) may be used.
+
+**Rounding:** percentages are rounded with the *largest remainder method* (Hare-Niemeyer), so they always add up to exactly 100 %.
+
+**More:**
+
+- **View › Language** switches between English and German.
+- **View › Text size** makes everything bigger.
+- **Keyboard shortcuts:** <kbd>Ctrl</kbd>+<kbd>N</kbd> adds a yarn, <kbd>Ctrl</kbd>+<kbd>L</kbd> adds a yarn from the library, and <kbd>F1</kbd> opens the guide. On a Mac, use <kbd>Cmd</kbd> instead of <kbd>Ctrl</kbd>.
+
+### Your data and backups
+
+Everything is **saved automatically**: your yarn library, your fiber list, your settings, and the project you're working on, which is still there the next time you start the program.
+
+All of it is stored in a single file, `data.json`, in your personal data folder:
+
+| System | Folder |
+|---|---|
+| Windows | `%APPDATA%\YarnCalculator` |
+| macOS | `~/Library/Application Support/YarnCalculator` |
+| Linux | `~/.local/share/yarncalculator` |
+
+**File › Open data folder** takes you there.
+
+- **File › Export backup…** saves everything into one file, e.g. for a USB stick or a new computer.
+- **File › Import…** adds yarns from a backup or from the old `yarns.json`/`fibers.json`. Nothing is overwritten: if a yarn with the same name but a different composition already exists, the imported one gets a number, e.g. `Sock yarn (2)`.
+- `data.json.bak` in the data folder is a copy of the state from the last time the program started.
+- If `data.json` is ever damaged, the program restores the `.bak` copy automatically and keeps the damaged file for inspection.
+
+<details>
+<summary>File format (for the curious)</summary>
+
 ```json
 {
-  "Sockenwolle Klassik": {
-    "f0": { "name": "Schurwolle", "percentage": 75.00 },
-    "f1": { "name": "Polyamid", "percentage": 25.00 }
-  }
+  "format": "yarncalculator",
+  "version": 2,
+  "settings": { "language": "en", "textSize": 100, "decimals": 1, "guideSeen": true },
+  "fibers": ["Polyamide", "Virgin wool"],
+  "yarns": [
+    {
+      "name": "Classic sock yarn",
+      "composition": [
+        { "fiber": "Virgin wool", "percent": 75 },
+        { "fiber": "Polyamide", "percent": 25 }
+      ]
+    }
+  ],
+  "project": { "yarns": [ { "name": "Classic sock yarn", "grams": "150", "composition": [ … ] } ] }
 }
 ```
 
-#### `fibers.json`
-Speichert die Liste der verfügbaren Fasernamen für das Dropdown-Menü.
-```json
-[
-  "Baumwolle",
-  "Merino",
-  "Seide",
-  "Polyamid"
-]
-```
+`version` lets future versions migrate the file safely. Values in `project` are stored exactly as typed, so half-finished input survives a restart.
+To keep the data somewhere else (e.g. a USB stick), start with `java -Dyarncalc.dir=PATH YarnCalculator.java`.
+</details>
+
+### Troubleshooting
+
+- **Nothing happens when I double-click `start.bat`.** Open a command prompt in the folder and run `java YarnCalculator.java` to see the error message. Most often:
+  - `'java' is not recognized`: Java isn't installed or isn't on the PATH. Reinstall it with the "Add to PATH" option.
+  - Many lines like `error: ... not supported in -source 11`: your Java is too old. Install version 17 or newer.
+  - `error: ... jdk.compiler` / compiler not found: you installed a JRE. Install a **JDK**.
+- **The text is too small.** Use **View › Text size**.
+- **My old yarns are missing.** Use **File › Import…** and select the old `yarns.json`.
+
+---
+
+<a name="-deutsch"></a>
+## 🇩🇪 Deutsch
+
+### Inhalt
+1. [Installation](#installation-1)
+2. [Umstieg von der alten Version (GarnRechnerProzedural)](#umstieg-von-der-alten-version)
+3. [Bedienung](#bedienung)
+4. [Deine Daten und Sicherungen](#deine-daten-und-sicherungen)
+5. [Probleme lösen](#probleme-lösen)
+
+### Installation
+
+**1. Java installieren (einmalig).** Du brauchst ein **JDK ab Version 17**. Ein reines „JRE“ reicht nicht.
+Lade das kostenlose *Eclipse Temurin JDK* von **[adoptium.net](https://adoptium.net/)** herunter (die „LTS“-Version passt).
+Lass unter Windows im Installer die Option **„Add to PATH“** eingeschaltet.
+
+**2. Garn-Rechner herunterladen.** Lege diese Dateien in einen Ordner deiner Wahl, z. B. `Dokumente\GarnRechner`:
+
+| Datei | Was ist das? |
+|---|---|
+| `YarnCalculator.java` | das Programm |
+| `start.bat` | Starter für Windows |
+| `start.sh` | Starter für Linux / macOS |
+
+**3. Starten.**
+
+- **Windows:** Doppelklick auf `start.bat`.
+  Für ein Desktop-Symbol: Rechtsklick auf `start.bat` → *Weitere Optionen anzeigen* (Windows 11) → *Senden an* → *Desktop (Verknüpfung erstellen)*.
+- **macOS / Linux:** Terminal im Ordner öffnen und `./start.sh` ausführen.
+  Unter macOS kannst du `start.sh` in `start.command` umbenennen, dann startet es per Doppelklick.
+- **Überall von Hand:** `java YarnCalculator.java`
+
+Du musst nichts kompilieren. Java führt die Datei direkt aus, deshalb kann der erste Start ein paar Sekunden dauern.
+
+### Umstieg von der alten Version
+
+Die alte Version hieß `GarnRechnerProzedural.java` und speicherte ihre Daten in `yarns.json` und `fibers.json`.
+
+1. Kopiere `YarnCalculator.java` und `start.bat` (bzw. `start.sh`) **in denselben Ordner wie bisher**, also dorthin, wo `yarns.json` und `fibers.json` liegen.
+2. Starte das Programm mit der **neuen** `start.bat`. Wenn deine Desktop-Verknüpfung auf die alte `start.bat` zeigt, ersetze diese Datei einfach durch die neue.
+3. Beim ersten Start werden deine gespeicherten Garne und Fasernamen **automatisch übernommen**. Ein grüner Kasten in der Begrüßungs-Anleitung bestätigt das.
+
+Deine alten Dateien werden **nicht verändert oder gelöscht**, du kannst also jederzeit zurück.
+Falls die neue Version woanders gestartet wurde und nichts gefunden hat: **Datei › Importieren…** wählen und die alte `yarns.json` auswählen. Die `fibers.json` daneben wird automatisch mit übernommen.
+
+Die alte `GarnRechnerProzedural.java` und die `*.class`-Dateien kannst du danach löschen.
+
+### Bedienung
+
+Das Programm hat eine eingebaute Anleitung (**Hilfe › Anleitung** oder **F1**), die sich beim ersten Start automatisch öffnet. Kurz gefasst:
+
+1. **Garn hinzufügen:** ein Eintrag für jedes verwendete Garn. Nutze **+ Garn hinzufügen** oder **Aus der Bibliothek…** für ein gespeichertes Garn.
+2. **Gewicht eintragen:** wie viel Gramm du davon verbraucht hast.
+   *Tipp:* Restknäuel wiegen und vom vollen Knäuelgewicht abziehen.
+3. **Fasern eintragen:** so wie sie auf der Banderole stehen, z. B. *Schurwolle 75* und *Polyamid 25*. Fasernamen werden beim Tippen vorgeschlagen.
+4. **Ergebnis ablesen:** rechts, es aktualisiert sich beim Tippen.
+   - **Für Excel kopieren** kopiert die Tabelle zum Einfügen in Excel, LibreOffice oder Google Sheets.
+   - **Etikett-Text kopieren** kopiert eine Zeile wie `75 % Schurwolle, 25 % Polyamid`.
+   - **Runden auf** wechselt zwischen ganzen Prozent und einer Nachkommastelle.
+
+**Farben:** Jedes Garn zeigt eine Statuszeile.
+
+- 🟢 **Grün:** Das Garn ist vollständig.
+- 🟠 **Orange:** Es fehlt noch etwas, z. B. ergeben die Anteile erst 90 %. Der Knopf **Auffüllen** trägt den fehlenden Anteil ein.
+- 🔴 **Rot:** Eine Eingabe ist ungültig, z. B. ein Buchstabe in einem Zahlenfeld.
+
+Das Ergebnis erscheint, sobald alle Garne grün sind. `12,5` und `12.5` funktionieren beide.
+
+**Garn-Bibliothek:** Klicke bei einem Garn auf **In Bibliothek speichern**, um es später wiederzuverwenden. Unter dem Namen siehst du, ob das Garn *in der Bibliothek gespeichert* ist oder *von der Bibliothek abweicht*. Weicht es ab, speichert **Bibliothek aktualisieren** deine Änderung.
+Unter **Bibliothek › Garne verwalten** kannst du Garne umbenennen, bearbeiten, duplizieren und löschen.
+
+**Fasernamen:** Die Liste macht nur Vorschläge, du kannst jeden Namen eintippen. Neue Namen landen automatisch in der Liste, wenn du ein Garn in der Bibliothek speicherst. Die Liste bearbeitest du unter **Bibliothek › Fasern verwalten**.
+Für Textiletiketten in der EU sind nur die Fasernamen aus Anhang I der [Verordnung (EU) Nr. 1007/2011](https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215) erlaubt.
+
+**Runden:** Die Prozente werden nach dem *Hare-Niemeyer-Verfahren* (größter Rest) gerundet und ergeben daher immer genau 100 %.
+
+**Außerdem:**
+
+- **Ansicht › Sprache** wechselt zwischen Deutsch und Englisch.
+- **Ansicht › Schriftgröße** macht alles größer.
+- **Tastenkürzel:** <kbd>Strg</kbd>+<kbd>N</kbd> fügt ein Garn hinzu, <kbd>Strg</kbd>+<kbd>L</kbd> ein Garn aus der Bibliothek, <kbd>F1</kbd> öffnet die Anleitung. Am Mac nimmst du <kbd>Cmd</kbd> statt <kbd>Strg</kbd>.
+
+### Deine Daten und Sicherungen
+
+Alles wird **automatisch gespeichert**: deine Garn-Bibliothek, die Faserliste, deine Einstellungen und das Projekt, an dem du gerade arbeitest. Es ist beim nächsten Start wieder da.
+
+Alles steht in einer einzigen Datei `data.json` in deinem persönlichen Datenordner:
+
+| System | Ordner |
+|---|---|
+| Windows | `%APPDATA%\YarnCalculator` |
+| macOS | `~/Library/Application Support/YarnCalculator` |
+| Linux | `~/.local/share/yarncalculator` |
+
+**Datei › Datenordner öffnen** bringt dich direkt dorthin.
+
+- **Datei › Sicherung exportieren…** speichert alles in einer Datei, z. B. für einen USB-Stick oder einen neuen Computer.
+- **Datei › Importieren…** übernimmt Garne aus einer Sicherung oder aus der alten `yarns.json`/`fibers.json`. Es wird nichts überschrieben: Gibt es schon ein Garn mit gleichem Namen, aber anderer Zusammensetzung, bekommt das importierte eine Nummer, z. B. `Sockenwolle (2)`.
+- `data.json.bak` im Datenordner ist eine Kopie des Stands vom letzten Programmstart.
+- Sollte `data.json` einmal beschädigt sein, stellt das Programm automatisch die `.bak`-Kopie wieder her und bewahrt die beschädigte Datei auf.
+
+<details>
+<summary>Dateiformat (für Neugierige)</summary>
+
+Siehe das Beispiel im [englischen Teil](#your-data-and-backups). `version` erlaubt künftigen Versionen eine sichere Übernahme der Daten. Die Werte unter `project` werden genau so gespeichert, wie sie eingetippt wurden, damit halbfertige Eingaben einen Neustart überstehen.
+Um die Daten woanders abzulegen (z. B. auf einem USB-Stick), starte mit `java -Dyarncalc.dir=PFAD YarnCalculator.java`.
+</details>
+
+### Probleme lösen
+
+- **Beim Doppelklick auf `start.bat` passiert nichts.** Öffne im Ordner eine Eingabeaufforderung und führe `java YarnCalculator.java` aus, dann siehst du die Fehlermeldung. Häufigste Ursachen:
+  - `'java' ist nicht ... erkannt`: Java ist nicht installiert oder nicht im PATH. Neu installieren und dabei „Add to PATH“ einschalten.
+  - Viele Zeilen wie `error: ... nicht unterstützt in -source 11`: Deine Java-Version ist zu alt. Version 17 oder neuer installieren.
+  - Compiler nicht gefunden: Du hast ein JRE installiert. Installiere ein **JDK**.
+- **Die Schrift ist zu klein.** Nutze **Ansicht › Schriftgröße**.
+- **Meine alten Garne fehlen.** Nutze **Datei › Importieren…** und wähle die alte `yarns.json`.
+
+---
+
+License: GNU GPL v3 – see [LICENSE](LICENSE).
