@@ -175,9 +175,11 @@ public class YarnCalculator {
             p("lbl_label_text", "Etikett-Text", "Label text");
             p("btn_copy_table", "Für Excel kopieren", "Copy for Excel");
             p("tip_copy_table", "Tabelle kopieren – danach in Excel, LibreOffice oder Google Sheets einfügen", "Copy the table – then paste it into Excel, LibreOffice or Google Sheets");
-            p("btn_copy_label", "Etikett-Text kopieren", "Copy label text");
+            p("btn_copy_label", "Etikett für Excel kopieren", "Copy label for Excel");
+            p("tip_copy_label", "Etikett kopieren – beim Einfügen landet es in einer einzigen Zelle, jede Faser in einer eigenen Zeile. Schriftart und -größe der Zelle bleiben erhalten.",
+                    "Copy the label – it pastes into a single cell, one fiber per line. The cell keeps its font and size.");
             p("st_copied_table", "Tabelle kopiert – einfach in eine Tabellenkalkulation einfügen.", "Table copied – just paste it into a spreadsheet.");
-            p("st_copied_label", "Etikett-Text kopiert.", "Label text copied.");
+            p("st_copied_label", "Etikett kopiert – in eine Zelle einfügen, jede Faser steht in einer eigenen Zeile.", "Label copied – paste it into a cell, each fiber gets its own line.");
             // Status bar
             p("st_removed", "„%s“ entfernt.", "Removed \"%s\".");
             p("btn_undo", "Rückgängig", "Undo");
@@ -284,7 +286,9 @@ public class YarnCalculator {
                 <li><b>Fasern eintragen</b> – so wie sie auf der Banderole stehen, z.&nbsp;B. <i>Schurwolle 75</i> und
                     <i>Polyamid 25</i>. Beim Tippen wird der Fasername vorgeschlagen.</li>
                 <li><b>Ergebnis ablesen</b> – rechts, es aktualisiert sich beim Tippen. <i>Für Excel kopieren</i> legt die
-                    Tabelle in die Zwischenablage, <i>Etikett-Text kopieren</i> eine Zeile wie <i>75 % Schurwolle, 25 % Polyamid</i>.</li>
+                    Tabelle in die Zwischenablage. <i>Etikett für Excel kopieren</i> kopiert das Etikett so, dass es beim Einfügen
+                    in <b>einer</b> Zelle landet, jede Faser in einer eigenen Zeile (z.&nbsp;B. <i>75 % Schurwolle</i> / <i>25 % Polyamid</i>).
+                    Schriftart und -größe der Zelle bleiben dabei erhalten.</li>
                 </ol>
                 <h3>Was die Farben bedeuten</h3>
                 <ul>
@@ -307,7 +311,9 @@ public class YarnCalculator {
                 <a href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215">Verordnung (EU) Nr. 1007/2011</a> erlaubt.</p>
                 <h3>Runden</h3>
                 <p>Wähle ganze Prozent oder eine Nachkommastelle. Der Rechner nutzt das Hare-Niemeyer-Verfahren
-                (größter Rest), daher ergeben die Anteile immer genau 100 %.</p>
+                (größter Rest), daher ergeben die Anteile immer genau 100 %. Eine Faser, die nur in sehr kleiner Menge
+                enthalten ist, wird nie mit 0 % angezeigt, sondern mit mindestens 1 % (bzw. 0,1 %) – dieser Anteil wird
+                anteilig von den anderen Fasern abgezogen.</p>
                 <h3>Deine Daten</h3>
                 <p>Alles wird automatisch gespeichert – die Bibliothek und auch dein aktuelles Projekt, das beim nächsten Start wieder da ist.
                 Datenordner: %DIR%</p>
@@ -338,7 +344,8 @@ public class YarnCalculator {
                 <li><b>Enter the fibers</b> – as printed on the ball band, e.g. <i>Wool 75</i> and <i>Polyamide 25</i>.
                     Fiber names are suggested while you type.</li>
                 <li><b>Read the result</b> – on the right; it updates while you type. <i>Copy for Excel</i> puts the table
-                    on the clipboard, <i>Copy label text</i> copies a line like <i>75% Wool, 25% Polyamide</i>.</li>
+                    on the clipboard. <i>Copy label for Excel</i> copies the label so that it pastes into <b>one</b> cell,
+                    one fiber per line (e.g. <i>75% Wool</i> / <i>25% Polyamide</i>). The cell keeps its font and size.</li>
                 </ol>
                 <h3>What the colors mean</h3>
                 <ul>
@@ -361,7 +368,8 @@ public class YarnCalculator {
                 <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02011R1007-20180215">Regulation (EU) No 1007/2011</a> may be used.</p>
                 <h3>Rounding</h3>
                 <p>Choose whole percent or one decimal. The calculator uses the largest remainder method,
-                so the shares always add up to exactly 100%.</p>
+                so the shares always add up to exactly 100%. A fiber that is only present in a tiny amount is never shown
+                as 0% but with at least 1% (or 0.1%) – that amount is taken proportionally from the other fibers.</p>
                 <h3>Your data</h3>
                 <p>Everything is saved automatically – your library and also your current project, which is back when you start
                 the program again. Data folder: %DIR%</p>
@@ -617,25 +625,63 @@ public class YarnCalculator {
             return r;
         }
 
-        /** Hare-Niemeyer: rounds so that the result always adds up to exactly 100. */
+        /**
+         * Rounds the shares so that they always add up to exactly 100 (Hare-Niemeyer / largest remainder).
+         * A fiber that is present but would round to 0 is shown with the smallest step instead (1 %, or 0.1 %
+         * with one decimal). That amount is taken proportionally from the other fibers before they are rounded.
+         * Units are whole percent (decimals = 0) or tenths of a percent (decimals = 1).
+         */
         static long[] largestRemainder(double[] exactPercents, int decimals) {
             int n = exactPercents.length;
             long unit = decimals == 0 ? 1 : 10;
+            long total = 100 * unit;
+            boolean[] minimum = new boolean[n];
             long[] units = new long[n];
+            while (true) {
+                // Fibers held at the minimum get 1 unit each; the rest is shared among the others.
+                long reserved = 0;
+                double freeSum = 0;
+                for (int i = 0; i < n; i++) {
+                    if (minimum[i]) reserved++;
+                    else freeSum += exactPercents[i];
+                }
+                if (freeSum <= 0) break;
+                double scale = (total - reserved) / freeSum;
+                double[] target = new double[n];
+                for (int i = 0; i < n; i++) target[i] = minimum[i] ? 0 : exactPercents[i] * scale;
+                distribute(target, minimum, total - reserved, units);
+
+                // Any present fiber that still ended up at 0 is raised to the minimum, then everything is redone.
+                boolean changed = false;
+                for (int i = 0; i < n; i++) {
+                    if (!minimum[i] && units[i] == 0 && exactPercents[i] > 0 && reserved + 1 < total) {
+                        minimum[i] = true;
+                        reserved++;
+                        changed = true;
+                    }
+                }
+                if (!changed) break;
+            }
+            for (int i = 0; i < n; i++) if (minimum[i]) units[i] = 1;
+            return units;
+        }
+
+        /** Largest remainder: floors every target, then hands the leftover units to the biggest remainders. */
+        private static void distribute(double[] target, boolean[] skip, long total, long[] units) {
+            int n = target.length;
             double[] rem = new double[n];
+            List<Integer> idx = new ArrayList<>();
             long sum = 0;
             for (int i = 0; i < n; i++) {
-                double x = exactPercents[i] * unit;
-                units[i] = (long) Math.floor(x + 1e-9);
-                rem[i] = x - units[i];
+                units[i] = 0;
+                if (skip[i]) continue;
+                units[i] = (long) Math.floor(target[i] + 1e-9);
+                rem[i] = target[i] - units[i];
                 sum += units[i];
+                idx.add(i);
             }
-            long left = 100 * unit - sum;
-            Integer[] idx = new Integer[n];
-            for (int i = 0; i < n; i++) idx[i] = i;
-            Arrays.sort(idx, (a, b) -> rem[a] != rem[b] ? Double.compare(rem[b], rem[a]) : Double.compare(exactPercents[b], exactPercents[a]));
-            for (int k = 0; k < left && n > 0; k++) units[idx[k % n]]++;
-            return units;
+            idx.sort((a, b) -> rem[a] != rem[b] ? Double.compare(rem[b], rem[a]) : Double.compare(target[b], target[a]));
+            for (int k = 0; k < total - sum && !idx.isEmpty(); k++) units[idx.get(k % idx.size())]++;
         }
 
         static Result compute(List<ProjectYarn> yarns, Library lib, int decimals) {
@@ -681,15 +727,22 @@ public class YarnCalculator {
 
     record Result(int yarnCount, double totalGrams, List<String> problems, List<String> fibers, double[] grams, long[] units, int decimals) {
         String share(int i) { return fmt(units[i] / (decimals == 0 ? 1.0 : 10.0), decimals); }
+        /** One fiber per line, e.g. "75 % Schurwolle\n25 % Polyamid". */
         String labelText() {
             StringBuilder b = new StringBuilder();
             for (int i = 0; i < fibers.size(); i++) {
                 if (units[i] == 0) continue;
-                if (b.length() > 0) b.append(", ");
+                if (b.length() > 0) b.append('\n');
                 b.append(pct(share(i))).append(' ').append(fibers.get(i));
             }
             return b.toString();
         }
+
+        /**
+         * The label as one spreadsheet cell: plain text in quotes, so Excel, LibreOffice and Google Sheets
+         * paste it into a single cell with line breaks. Being plain text, it keeps the cell's font and size.
+         */
+        String labelCell() { return '"' + labelText().replace("\"", "\"\"") + '"'; }
     }
 
     // =====================================================================
@@ -1922,11 +1975,13 @@ public class YarnCalculator {
             JButton copyTable = Ui.button(tr("btn_copy_table"), this::copyTable);
             copyTable.setToolTipText(tr("tip_copy_table"));
             buttons.add(copyTable);
-            buttons.add(Ui.button(tr("btn_copy_label"), () -> {
+            JButton copyLabel = Ui.button(tr("btn_copy_label"), () -> {
                 if (last == null) return;
-                Ui.copy(last.labelText());
+                Ui.copy(last.labelCell());
                 app.status(tr("st_copied_label"), Ui.OK);
-            }));
+            });
+            copyLabel.setToolTipText(tr("tip_copy_label"));
+            buttons.add(copyLabel);
             buttons.setAlignmentX(LEFT_ALIGNMENT);
             bottom.add(buttons);
             res.add(bottom, BorderLayout.SOUTH);
@@ -1960,6 +2015,8 @@ public class YarnCalculator {
             model.setResult(r);
             bar.setValues(r.grams());
             label.setText(r.labelText());
+            label.setRows(Math.max(2, Math.min(6, r.fibers().size())));
+            label.revalidate();
             cards.show(cardPanel, "result");
         }
 

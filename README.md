@@ -66,7 +66,7 @@ The program has a built-in guide (**Help › Guide**, or **F1**) that opens auto
 3. **Enter the fibers** as printed on the ball band, e.g. *Wool 75* and *Polyamide 25*. Fiber names are suggested while you type.
 4. **Read the result** on the right. It updates as you type.
    - **Copy for Excel** copies the table, which you can paste into Excel, LibreOffice or Google Sheets.
-   - **Copy label text** copies a line like `75% Wool, 25% Polyamide`.
+   - **Copy label for Excel** copies the label so that it pastes into **one cell**, with one fiber per line (e.g. `75% Wool` / `25% Polyamide`). It's plain text, so the cell keeps its font and size. Excel may switch on "Wrap text" for the cell so the lines show.
    - **Round to** switches between whole percent and one decimal place.
 
 **Colors:** each yarn shows a status line.
@@ -84,6 +84,7 @@ You can rename, edit, duplicate or delete saved yarns under **Library › Manage
 For textile labels in the EU, only the fiber names in Annex I of [Regulation (EU) No 1007/2011](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02011R1007-20180215) may be used.
 
 **Rounding:** percentages are rounded with the *largest remainder method* (Hare-Niemeyer), so they always add up to exactly 100 %.
+A fiber that is only present in a tiny amount is never shown as 0 %. It gets at least 1 % (or 0.1 % with one decimal), and that amount is taken proportionally from the other fibers.
 
 **More:**
 
@@ -204,7 +205,7 @@ Das Programm hat eine eingebaute Anleitung (**Hilfe › Anleitung** oder **F1**)
 3. **Fasern eintragen:** so wie sie auf der Banderole stehen, z. B. *Schurwolle 75* und *Polyamid 25*. Fasernamen werden beim Tippen vorgeschlagen.
 4. **Ergebnis ablesen:** rechts, es aktualisiert sich beim Tippen.
    - **Für Excel kopieren** kopiert die Tabelle zum Einfügen in Excel, LibreOffice oder Google Sheets.
-   - **Etikett-Text kopieren** kopiert eine Zeile wie `75 % Schurwolle, 25 % Polyamid`.
+   - **Etikett für Excel kopieren** kopiert das Etikett so, dass es beim Einfügen in **einer Zelle** landet, jede Faser in einer eigenen Zeile (z. B. `75 % Schurwolle` / `25 % Polyamid`). Es ist reiner Text, Schriftart und -größe der Zelle bleiben also erhalten. Excel schaltet für die Zelle eventuell „Zeilenumbruch“ ein, damit die Zeilen sichtbar sind.
    - **Runden auf** wechselt zwischen ganzen Prozent und einer Nachkommastelle.
 
 **Farben:** Jedes Garn zeigt eine Statuszeile.
@@ -222,6 +223,7 @@ Unter **Bibliothek › Garne verwalten** kannst du Garne umbenennen, bearbeiten,
 Für Textiletiketten in der EU sind nur die Fasernamen aus Anhang I der [Verordnung (EU) Nr. 1007/2011](https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215) erlaubt.
 
 **Runden:** Die Prozente werden nach dem *Hare-Niemeyer-Verfahren* (größter Rest) gerundet und ergeben daher immer genau 100 %.
+Eine Faser, die nur in sehr kleiner Menge enthalten ist, wird nie mit 0 % angezeigt. Sie bekommt mindestens 1 % (bzw. 0,1 % bei einer Nachkommastelle), und dieser Anteil wird anteilig von den anderen Fasern abgezogen.
 
 **Außerdem:**
 
