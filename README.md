@@ -84,6 +84,7 @@ You can rename, edit, duplicate or delete saved yarns under **Library › Manage
 For textile labels in the EU, only the fiber names in Annex I of [Regulation (EU) No 1007/2011](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02011R1007-20180215) may be used.
 
 **Rounding:** percentages are rounded with the *largest remainder method* (Hare-Niemeyer), so they always add up to exactly 100 %.
+A fiber that is only present in a tiny amount is never shown as 0 %. It gets at least 1 % (or 0.1 % with one decimal), and that amount is taken proportionally from the other fibers.
 
 **More:**
 
@@ -222,6 +223,7 @@ Unter **Bibliothek › Garne verwalten** kannst du Garne umbenennen, bearbeiten,
 Für Textiletiketten in der EU sind nur die Fasernamen aus Anhang I der [Verordnung (EU) Nr. 1007/2011](https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215) erlaubt.
 
 **Runden:** Die Prozente werden nach dem *Hare-Niemeyer-Verfahren* (größter Rest) gerundet und ergeben daher immer genau 100 %.
+Eine Faser, die nur in sehr kleiner Menge enthalten ist, wird nie mit 0 % angezeigt. Sie bekommt mindestens 1 % (bzw. 0,1 % bei einer Nachkommastelle), und dieser Anteil wird anteilig von den anderen Fasern abgezogen.
 
 **Außerdem:**
 

@@ -307,7 +307,9 @@ public class YarnCalculator {
                 <a href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A02011R1007-20180215">Verordnung (EU) Nr. 1007/2011</a> erlaubt.</p>
                 <h3>Runden</h3>
                 <p>Wähle ganze Prozent oder eine Nachkommastelle. Der Rechner nutzt das Hare-Niemeyer-Verfahren
-                (größter Rest), daher ergeben die Anteile immer genau 100 %.</p>
+                (größter Rest), daher ergeben die Anteile immer genau 100 %. Eine Faser, die nur in sehr kleiner Menge
+                enthalten ist, wird nie mit 0 % angezeigt, sondern mit mindestens 1 % (bzw. 0,1 %) – dieser Anteil wird
+                anteilig von den anderen Fasern abgezogen.</p>
                 <h3>Deine Daten</h3>
                 <p>Alles wird automatisch gespeichert – die Bibliothek und auch dein aktuelles Projekt, das beim nächsten Start wieder da ist.
                 Datenordner: %DIR%</p>
@@ -361,7 +363,8 @@ public class YarnCalculator {
                 <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02011R1007-20180215">Regulation (EU) No 1007/2011</a> may be used.</p>
                 <h3>Rounding</h3>
                 <p>Choose whole percent or one decimal. The calculator uses the largest remainder method,
-                so the shares always add up to exactly 100%.</p>
+                so the shares always add up to exactly 100%. A fiber that is only present in a tiny amount is never shown
+                as 0% but with at least 1% (or 0.1%) – that amount is taken proportionally from the other fibers.</p>
                 <h3>Your data</h3>
                 <p>Everything is saved automatically – your library and also your current project, which is back when you start
                 the program again. Data folder: %DIR%</p>
@@ -617,25 +620,63 @@ public class YarnCalculator {
             return r;
         }
 
-        /** Hare-Niemeyer: rounds so that the result always adds up to exactly 100. */
+        /**
+         * Rounds the shares so that they always add up to exactly 100 (Hare-Niemeyer / largest remainder).
+         * A fiber that is present but would round to 0 is shown with the smallest step instead (1 %, or 0.1 %
+         * with one decimal). That amount is taken proportionally from the other fibers before they are rounded.
+         * Units are whole percent (decimals = 0) or tenths of a percent (decimals = 1).
+         */
         static long[] largestRemainder(double[] exactPercents, int decimals) {
             int n = exactPercents.length;
             long unit = decimals == 0 ? 1 : 10;
+            long total = 100 * unit;
+            boolean[] minimum = new boolean[n];
             long[] units = new long[n];
+            while (true) {
+                // Fibers held at the minimum get 1 unit each; the rest is shared among the others.
+                long reserved = 0;
+                double freeSum = 0;
+                for (int i = 0; i < n; i++) {
+                    if (minimum[i]) reserved++;
+                    else freeSum += exactPercents[i];
+                }
+                if (freeSum <= 0) break;
+                double scale = (total - reserved) / freeSum;
+                double[] target = new double[n];
+                for (int i = 0; i < n; i++) target[i] = minimum[i] ? 0 : exactPercents[i] * scale;
+                distribute(target, minimum, total - reserved, units);
+
+                // Any present fiber that still ended up at 0 is raised to the minimum, then everything is redone.
+                boolean changed = false;
+                for (int i = 0; i < n; i++) {
+                    if (!minimum[i] && units[i] == 0 && exactPercents[i] > 0 && reserved + 1 < total) {
+                        minimum[i] = true;
+                        reserved++;
+                        changed = true;
+                    }
+                }
+                if (!changed) break;
+            }
+            for (int i = 0; i < n; i++) if (minimum[i]) units[i] = 1;
+            return units;
+        }
+
+        /** Largest remainder: floors every target, then hands the leftover units to the biggest remainders. */
+        private static void distribute(double[] target, boolean[] skip, long total, long[] units) {
+            int n = target.length;
             double[] rem = new double[n];
+            List<Integer> idx = new ArrayList<>();
             long sum = 0;
             for (int i = 0; i < n; i++) {
-                double x = exactPercents[i] * unit;
-                units[i] = (long) Math.floor(x + 1e-9);
-                rem[i] = x - units[i];
+                units[i] = 0;
+                if (skip[i]) continue;
+                units[i] = (long) Math.floor(target[i] + 1e-9);
+                rem[i] = target[i] - units[i];
                 sum += units[i];
+                idx.add(i);
             }
-            long left = 100 * unit - sum;
-            Integer[] idx = new Integer[n];
-            for (int i = 0; i < n; i++) idx[i] = i;
-            Arrays.sort(idx, (a, b) -> rem[a] != rem[b] ? Double.compare(rem[b], rem[a]) : Double.compare(exactPercents[b], exactPercents[a]));
-            for (int k = 0; k < left && n > 0; k++) units[idx[k % n]]++;
-            return units;
+            idx.sort((a, b) -> rem[a] != rem[b] ? Double.compare(rem[b], rem[a]) : Double.compare(target[b], target[a]));
+            for (int k = 0; k < total - sum && !idx.isEmpty(); k++) units[idx.get(k % idx.size())]++;
         }
 
         static Result compute(List<ProjectYarn> yarns, Library lib, int decimals) {
